@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="main.css">
+        <script src="socket.io.js"></script>
+        <script>
+            var socket = io.connect('http://cailabs.org:5006/'); //http://cailabs.org:5006
+            var username;
+            var date = new Date();
+            var today = date.getFullYear() + "/" + (date.getMonth()+1) + "/" + date.getDate(); 
+            var currentTime = date.getHours() + ':' + date.getMinutes(); 
+            
+            function init(){
+                var nameSubmit = document.getElementById('nameSubmit');
+                var messageSend = document.getElementById('messageSend');
+                nameSubmit.addEventListener('click', getName);
+                messageSend.addEventListener('click', sendMessage);
+            }
+            
+            socket.on('connect', function() {
+                console.log("Connected");
+            });
+
+            // Receive a message
+            socket.on('message', function(data) {
+                console.log("Got: " + data);
+                document.getElementById('messages').innerHTML = data + "<br />"
+                document.getElementById('messages').innerHTML;
+			});
+            
+            var sendMessage = function() {
+                var message = document.getElementById('message').value;
+                console.log("Sending: " + message);
+				
+				// Send a messaage
+                socket.emit('message', username + ": " + message+"...on" +today+ "at"+ currentTime);
+                document.getElementById('message').value ="";
+			};
+            
+        
+            var getName = function () {
+               username =  document.getElementById('name').value; 
+               document.getElementById('user').innerHTML= "Welcome to chat, " + username;
+            }
+			
+            addEventListener('load', init);
+                
+            // message +="On "+today+" at "+currentTime; $("textarea").val("");
+            </script>
+	</head>
+	
+	<body>
+        <div class="container">
+            
+            <h1>What's up?<br>Let's CHAT!!<img src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/bubble-icon.png" width="10%"> </h1>
+            
+	    <div id="user">
+            <h2>What's your name?</h2>
+	        <input type="text" id="name">
+            
+	        <input type="button" value="submit" id="nameSubmit">
+	    </div>
+            
+		<div class="mind"><h2>What's on your mind</h2>
+			<input type="text" id="message" name="message">
+            
+			<input type="button" value="send" id="messageSend">
+		</div>
+            
+		<div id="messages">
+			Messages appear here.
+		</div>
+            
+        </div>    
+	</body>
+</html>
